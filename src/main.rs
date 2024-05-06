@@ -133,9 +133,7 @@ impl Port {
     }
 
     fn build_dir(&self) -> PathBuf {
-        // let build_dir = self.config.root.join(".build");
-        let build_dir = PathBuf::from("/tmp/.build");
-        build_dir
+        self.config.root.join(".build")
     }
 
     fn build_category(&self, slug: &str, posts: &[Post]) -> Result<()> {
