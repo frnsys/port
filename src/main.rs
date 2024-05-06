@@ -585,5 +585,7 @@ fn main() {
             }
         },
     };
+    println!("Building site \"{}\"", port.config.name);
     port.build().unwrap();
+    println!("Done building.");
 }
