@@ -1,0 +1,49 @@
+{% extends 'layout.html' %}
+
+{% block meta %}
+    <title>{{ site.name }} - {{ post.title|striptags }}</title>
+    <meta name="description" content="{{ post.description }}">
+    <meta property="og:url" content="{{ current_url }}">
+    <meta property="og:site_name" content="{{ site.name }}">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="{{ post.title|striptags }}">
+    <meta property="og:description" content="{{ post.description }}">
+    <meta property="og:image" content="{{ site.url }}/{{ post.image }}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ post.title|striptags }}">
+    <meta name="twitter:description" content="{{ post.description }}">
+    <meta name="twitter:image" content="{{ site.url }}/{{ post.image }}">
+{% endblock %}
+
+{% block content %}
+
+    <section class="content">
+        <article class="single">
+            <header>
+                <h1>{{ post.title|safe }}</h1>
+                <div class="meta">
+                    {% if post.draft %}
+                        <span class="notice">DRAFT</span> ·
+                    {% endif %}
+
+                    <img class="avatar" src="/assets/avatar.png" /> ·
+                    {{ post.meta.published_at }} ·
+                    <a href="/{{ category }}">{{ category }}</a>
+                </div>
+            </header>
+            <div class="body">
+                {{ post.html|safe }}
+            </div>
+        </article>
+    </section>
+
+    <script>
+        [...document.querySelectorAll('h2')].forEach((el) => {
+            let link = document.createElement('a');
+            link.href = `#${el.id}`;
+            link.innerText = '𝄋';
+            link.classList.add('anchor');
+            el.appendChild(link);
+        });
+    </script>
+{% endblock %}

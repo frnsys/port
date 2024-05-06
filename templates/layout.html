@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <link rel="stylesheet" type="text/css" href="/css/style.css" media="screen">
+    <link rel="shortcut icon" href="/assets/favicon.ico" type="image/x-icon" />
+    <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss/rss.xml">
+
+    {% block meta %}
+        <title>{{ site.name }}</title>
+        <meta name="description" content="{{ site.desc }}">
+        <meta property="og:url" content="{{ site.url }}/{{ current_url }}">
+        <meta property="og:site_name" content="{{ site.name }}">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="{{ site.name }}">
+        <meta property="og:description" content="{{ site.desc }}">
+        <meta property="og:image" content="{{ site.url }}/{{ site.image }}">
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:title" content="{{ site.name }}">
+        <meta name="twitter:description" content="{{ site.desc }}">
+        <meta name="twitter:image" content="{{ site.url }}/{{ site.image }}">
+    {% endblock %}
+</head>
+
+<body>
+
+    <header class="banner">
+        <div class="title">
+            <a href="/">{{ site.name }}</a>
+        </div>
+        <div class="links">
+            {% for link in site.links %}
+                <a href="{{ link.url }}" {% if link.rel %}rel="{{ link.rel }}"{% endif %}>{{ link.name }}</a>
+            {% endfor %}
+        </div>
+    </header>
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer class="banner">
+        <div class="title">
+            <a href="/">{{ site.name }}</a>
+        </div>
+        <div class="links">
+            {% for link in site.links %}
+                <a href="{{ link.url }}">{{ link.name }}</a>
+            {% endfor %}
+        </div>
+    </footer>
+
+    <script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [["¦","¦"]],
+                displayMath: [['$$','$$']],
+                processEscapes: true
+            }
+        });
+    </script>
+</body>
+</html>

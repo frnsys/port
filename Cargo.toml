@@ -1,0 +1,17 @@
+[package]
+name = "port"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = "1.0.82"
+fs-err = "2.11.0"
+gray_matter = "0.2.6"
+inkjet = { version = "0.10.5", features = ["theme"] }
+pulldown-cmark = "0.10.3"
+rss = "2.0.7"
+serde = { version = "1.0.199", features = ["derive"] }
+serde_yaml = "0.9.34"
+tera = "1.19.1"
+time = { version = "0.3.36", features = ["local-offset", "serde", "macros", "formatting", "parsing"] }
+walkdir = "2.5.0"
