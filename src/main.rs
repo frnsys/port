@@ -5,7 +5,7 @@ use std::path::{Path, PathBuf};
 
 use anyhow::Result;
 use fs_err as fs;
-use gray_matter::{engine::YAML, Matter};
+use gray_matter::{Matter, engine::YAML};
 use serde::{Deserialize, Serialize};
 use tera::{Context, Tera};
 use time::format_description::well_known::Rfc2822;
@@ -226,11 +226,7 @@ impl Port {
             self.build_category(&category.slug, &category.posts)?;
         }
 
-        let mut posts: Vec<_> = categories
-            .into_iter()
-            .map(|cat| cat.posts)
-            .flatten()
-            .collect();
+        let mut posts: Vec<_> = categories.into_iter().flat_map(|cat| cat.posts).collect();
         posts.sort_by_key(|post| Reverse(post.meta.published_at));
         self.build_index(PathBuf::new(), &posts)?;
 
@@ -487,11 +483,11 @@ fn compile_markdown(raw: &str) -> Result<Compiled> {
                 // we will handle it separately.
                 Context::Title => (),
                 _ => {
-                    body.push_str(&text);
+                    body.push_str(text);
                 }
             },
             Event::End(TagEnd::Paragraph) => {
-                body.push_str("\n");
+                body.push('\n');
             }
 
             // Anything image-like we want to modify,
@@ -510,9 +506,9 @@ fn compile_markdown(raw: &str) -> Result<Compiled> {
                 parser.next(); // consume the associated `Event::End`
 
                 replacement_ev = Some(if is_video(dest_url) {
-                    Event::Html(video_html(dest_url, &title, &caption).into())
+                    Event::Html(video_html(dest_url, title, &caption).into())
                 } else {
-                    Event::Html(image_html(dest_url, &title, &caption).into())
+                    Event::Html(image_html(dest_url, title, &caption).into())
                 });
             }
 
