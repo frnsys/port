@@ -7,6 +7,7 @@ edition = "2024"
 anyhow = "1.0.97"
 fs-err = "2.11.0"
 gray_matter = "0.2.8"
+include_dir = { version = "0.7.4", features = ["glob"] }
 inkjet = { version = "0.10.5", features = ["theme"] }
 pulldown-cmark = "0.10.3"
 rss = "2.0.12"

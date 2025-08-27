@@ -6,6 +6,7 @@ use std::path::{Path, PathBuf};
 use anyhow::Result;
 use fs_err as fs;
 use gray_matter::{Matter, engine::YAML};
+use include_dir::{Dir, include_dir};
 use serde::{Deserialize, Serialize};
 use tera::{Context, Tera};
 use time::format_description::well_known::Rfc2822;
@@ -21,6 +22,8 @@ time::serde::format_description!(
 
 /// Directory name that will host static assets.
 const ASSETS_DIR: &str = "assets";
+
+static TEMPLATES_DIR: Dir = include_dir!("$CARGO_MANIFEST_DIR/templates");
 
 struct Port {
     config: Config,
@@ -565,6 +568,23 @@ fn compile_markdown(raw: &str) -> Result<Compiled> {
     })
 }
 
+fn templates() -> Tera {
+    let mut tera = Tera::default();
+    let mut tmpls = vec![];
+    for entry in TEMPLATES_DIR.find("**/*").unwrap() {
+        if let include_dir::DirEntry::File(f) = entry {
+            let path = f.path().to_string_lossy();
+            if !(path.ends_with(".html") || path.ends_with(".tera") || path.ends_with(".txt")) {
+                continue;
+            }
+            let src = std::str::from_utf8(f.contents()).unwrap();
+            tmpls.push((path, src));
+        }
+    }
+    tera.add_raw_templates(tmpls).unwrap();
+    tera
+}
+
 fn main() {
     let port = Port {
         config: {
@@ -573,15 +593,9 @@ fn main() {
             let file = fs::File::open(path).unwrap();
             serde_yaml::from_reader(file).unwrap()
         },
-        templates: match Tera::new("templates/**/*.html") {
-            Ok(t) => t,
-            Err(e) => {
-                println!("Parsing error(s): {}", e);
-                ::std::process::exit(1);
-            }
-        },
+        templates: templates(),
     };
     println!("Building site \"{}\"", port.config.name);
     port.build().unwrap();
-    println!("Done building.");
+    println!("Built to: {:?}.", port.build_dir());
 }
