@@ -384,10 +384,9 @@ figure embed {
 
 .anchor {
   position: absolute;
-  left: -2.6em;
+  left: -3em;
   color: var(--muted-color);
   font-size: 1.2em;
-  margin-top: -0.15em;
   padding-left: 2em;
   top: 0;
 }
