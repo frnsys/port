@@ -4,12 +4,12 @@ version = "1.0.1"
 edition = "2024"
 
 [dependencies]
-anyhow = "1.0.97"
-fs-err = "2.11.0"
-gray_matter = "0.2.8"
+anyhow = "1.0.99"
+fs-err = "3.1.1"
+gray_matter = "0.3.2"
 include_dir = { version = "0.7.4", features = ["glob"] }
-inkjet = { version = "0.10.5", features = ["theme"] }
-pulldown-cmark = "0.10.3"
+inkjet = { version = "0.11.1", features = ["theme"] }
+pulldown-cmark = "0.13.0"
 rss = "2.0.12"
 serde = { version = "1.0.219", features = ["derive"] }
 serde_yaml = "0.9.34"

@@ -345,9 +345,10 @@ fn find_categories(root: &Path) -> Result<HashMap<String, Vec<PathBuf>>> {
 fn extract_metadata(raw: &str) -> Result<(FrontMatter, String)> {
     let matter = Matter::<YAML>::new();
     let meta = matter
-        .parse_with_struct::<FrontMatter>(raw)
+        .parse::<FrontMatter>(raw)
         .expect("Front matter should always be present and valid");
-    Ok((meta.data, meta.content))
+    let data = meta.data.expect("Data present");
+    Ok((data, meta.content))
 }
 
 /// Iterate over a collection of posts in pages.
