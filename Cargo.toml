@@ -1,6 +1,6 @@
 [package]
 name = "port"
-version = "1.0.1"
+version = "1.1.0"
 edition = "2024"
 
 [dependencies]
@@ -16,3 +16,6 @@ serde_yaml = "0.9.34"
 tera = "1.20.0"
 time = { version = "0.3.41", features = ["local-offset", "serde", "macros", "formatting", "parsing"] }
 walkdir = "2.5.0"
+bpaf = { version = "0.9.20", features = ["derive"] }
+notify-debouncer-full = "0.7.0"
+tiny_file_server = "0.1.6"

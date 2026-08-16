@@ -2,15 +2,21 @@ use std::cmp::Reverse;
 use std::collections::HashMap;
 use std::os::unix::fs::symlink as symlink_dir;
 use std::path::{Path, PathBuf};
+use std::thread;
+use std::time::Duration;
 
 use anyhow::Result;
+use bpaf::Bpaf;
 use fs_err as fs;
 use gray_matter::{Matter, engine::YAML};
 use include_dir::{Dir, include_dir};
+use notify_debouncer_full::{
+    new_debouncer,
+    notify::{EventKind, RecursiveMode},
+};
 use serde::{Deserialize, Serialize};
 use tera::{Context, Tera};
-use time::format_description::well_known::Rfc2822;
-use time::{OffsetDateTime, PrimitiveDateTime, UtcOffset};
+use time::{OffsetDateTime, PrimitiveDateTime, UtcOffset, format_description::well_known::Rfc2822};
 use walkdir::{DirEntry, WalkDir};
 
 // For parsing `published_at` datetimes.
@@ -586,7 +592,20 @@ fn templates() -> Tera {
     tera
 }
 
+#[derive(Clone, Debug, Bpaf)]
+#[bpaf(options, version)]
+/// Blog builder
+struct Args {
+    #[bpaf(short, long)]
+    watch: bool,
+
+    #[bpaf(short, long)]
+    serve: bool,
+}
+
 fn main() {
+    let opts = args().run();
+
     let port = Port {
         config: {
             let home = std::env::var("HOME").expect("HOME env var should be defined");
@@ -596,7 +615,48 @@ fn main() {
         },
         templates: templates(),
     };
-    println!("Building site \"{}\"", port.config.name);
+
+    println!("Site: \"{}\"", port.config.name);
+    println!("Root: {:?}", port.config.root);
     port.build().unwrap();
     println!("Built to: {:?}.", port.build_dir());
+
+    if opts.serve {
+        let build_dir = port.build_dir();
+        thread::spawn(|| {
+            println!("Serving at http://127.0.0.1:3000");
+            tiny_file_server::FileServer::http("127.0.0.1:3000")
+                .expect("Failed to bind host")
+                .run(build_dir)
+                .expect("Failed to start server");
+        });
+    }
+
+    if opts.watch {
+        let root = port.config.root.clone();
+        let build_dir = port.build_dir();
+
+        let (tx, rx) = std::sync::mpsc::channel();
+        let mut debouncer = new_debouncer(Duration::from_millis(500), None, tx).unwrap();
+        debouncer.watch(root, RecursiveMode::Recursive).unwrap();
+
+        for res in rx {
+            match res {
+                Ok(events) => {
+                    let should_compile = events.iter().any(|ev| {
+                        !matches!(ev.kind, EventKind::Access(_))
+                            && !ev.paths.iter().any(|p| p.starts_with(&build_dir))
+                    });
+                    if should_compile {
+                        port.build().unwrap();
+                        println!("Built to: {:?}.", port.build_dir());
+                    }
+                }
+                Err(e) => println!("Error {:?}", e),
+            }
+        }
+    } else if opts.serve {
+        // Block for the web server
+        thread::park();
+    }
 }
