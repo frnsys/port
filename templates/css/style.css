@@ -2,7 +2,7 @@
   :root {
     --color: #eee;
     --background: #181818;
-    --em-color: #eccf98;
+    --em-color: #ececec;
     --muted-color: #383838;
     /* --accent-color: #ffdf62; */
     --accent-color: #4b80fd;
@@ -29,7 +29,7 @@
   :root {
     --color: #111;
     --background: #f0f0f0;
-    --em-color: #c61010;
+    --em-color: #222;
     --muted-color: #bbb;
     --accent-color: #005AFF;
     --accent-hover-color: #eb1818;
@@ -84,6 +84,18 @@
   font-weight: bold;
   src: url('fonts/OpenSans-BoldItalic.woff') format('woff');
 }
+@font-face {
+  font-family: 'Libre Baskerville';
+  font-style: italic;
+  font-weight: normal;
+  src: url('fonts/LibreBaskerville-Italic.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Libre Baskerville';
+  font-style: italic;
+  font-weight: bold;
+  src: url('fonts/LibreBaskerville-BoldItalic.ttf') format('truetype');
+}
 
 * {
   box-sizing: border-box;
@@ -110,6 +122,7 @@ a:hover {
 }
 
 em {
+  font-family: 'Libre Baskerville', serif;
   color: var(--em-color);
 }
 
